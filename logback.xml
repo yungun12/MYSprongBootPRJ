@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resoure="org/springframework/boot/logging/logback/default.xml"/>
+    <include resoure="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <!-- 로그 파일 저장장소 -->
+    <property name="log.dir" value="/data/log/SpringBootMyBatis"/>
+
+    <!-- 파일에 로그를 남깁니다. -->
+    <appender class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log_dir}/applog.log</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>
+                %d{yyyy-MM-dd HH:mm:ss} [%-5level] %logger{36} - %msg%n
+            </Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/applog.log%d{yyyy-MM-dd}.log.</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <Logger name="kopo.poly" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="File"/>
+    </Logger>
+</configuration>
