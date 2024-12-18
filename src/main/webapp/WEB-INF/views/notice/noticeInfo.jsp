@@ -23,7 +23,7 @@
         // 현재 글번호, 자바에서 받을 변수들은 자바스크립트 변수로 저장하면 편함
         const nSeq = "<%=CmmUtil.nvl(rDTO.getNoticeSeq())%>";
 
-        // HTML로딩이 완료되고, 실행됨
+        // HTML 로딩이 완료되고, 실행됨
         $(document).ready(function () {
             // 버튼 클릭했을때, 발생되는 이벤트 생성함(onclick 이벤트와 동일함)
             $("#btnEdit").on("click", function () {
@@ -83,6 +83,8 @@
 
             }
         }
+
+        /*]]>*/
     </script>
 </head>
 <body>
