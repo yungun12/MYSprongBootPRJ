@@ -46,7 +46,7 @@ public class MailController {
 
         String msg; // 발송 결과 메시지
 
-        // 웹 URL 로부터 전달받는 값들
+        // 웹 URL로부터 전달받는 값들
         String toMail = CmmUtil.nvl(request.getParameter("toMail")); // 받는사람
         String title = CmmUtil.nvl(request.getParameter("title")); // 제목
         String contents = CmmUtil.nvl(request.getParameter("contents")); // 내용
