@@ -1,15 +1,13 @@
-package kopo.poly.service;
+package kopo.poly.mapper;
 
 import kopo.poly.dto.MailDTO;
 
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
-
-public interface IMailService {
-
-    //메일 발송
-    int doSendMail(MailDTO pDTO) throws Exception;
+@Mapper
+public interface IMailMapper {
 
     //메일 리스트
     List<MailDTO> getMailList() throws Exception;

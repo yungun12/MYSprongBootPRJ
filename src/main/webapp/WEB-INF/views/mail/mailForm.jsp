@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8"%>
+<%@ page contentType="text/html;charset=utf-8" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,23 +8,24 @@
     <script type="text/javascript" src="/js/jquery-3.6.0.min.js"></script>
     <script type="text/javascript">
 
-        // HTML 로딩이 완료되고 실행됨
+        // HTML로딩이 완료되고, 실행됨
         $(document).ready(function () {
-            // 버튼 클릭했을떄 발생되는 이벤트 생성
+            // 버튼 클릭했을때, 발생되는 이벤트 생성함(onclick 이벤트와 동일함)
             $("#btnSend").on("click", function () {
 
                 // Ajax 호출해서 글 등록하기
                 $.ajax({
                         url: "/mail/sendMail",
                         type: "post", // 전송방식은 Post
-                        dataType: "JSON", // 전송결과는 JSON으로 받기
-                        data: $(#f).serialize(),
-                        success: function (json) {
-                            alert(json.msg);
+                        dataType: "JSON", // 전송 결과는 JSON으로 받기
+                        data: $("#f").serialize(), // form 태그 내 input 등 객체를 자동으로 전송할 형태로 변경하기
+                        success: function (json) { // /notice/noticeUpdate 호출이 성공했다면..
+                            alert(json.msg); // 메시지 띄우기
 
                         }
                     }
                 )
+
             })
         })
 
@@ -48,7 +49,7 @@
                 </div>
             </div>
             <div class="divTableRow">
-                <div class="divTableCell">메일 내용</div>
+                <div class="divTableCell">메일내용</div>
                 <div class="divTableCell"><textarea name="contents" style="width: 95%; height: 400px"></textarea>
                 </div>
             </div>
