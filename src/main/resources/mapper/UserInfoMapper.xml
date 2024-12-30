@@ -26,6 +26,22 @@
         (USER_ID,
          USER_NAME,
          PASSWORD,
-         )
+         EMAIL,
+         ADDR1,
+         ADDR2,
+         REG_ID,
+         REG_DT,
+         CHG_ID,
+         CHG_DT)
+        VALUES (#{userId},
+                #{userName},
+                #{password},
+                #{email},
+                #{addr1},
+                #{addr2},
+                #{userId},
+                NOW(),
+                #{userId},
+                NOW())
     </insert>
 </mapper>
