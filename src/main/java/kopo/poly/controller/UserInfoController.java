@@ -10,6 +10,7 @@ import kopo.poly.util.EncryptUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -311,4 +312,88 @@ public class UserInfoController {
 
         return "user/loginResult";
     }
+
+    /**
+     * 아이디 찾기 화면
+     */
+    @GetMapping(value = "searchUserId")
+    public String searchUserId() {
+        log.info("{}.searchUserId Start!", this.getClass().getName());
+
+        log.info("{}.searchUserId End!", this.getClass().getName());
+
+        return "user/searchUserId";
+
+    }
+
+    /**
+     * 아이디 찾기 로직 수행
+     */
+    @PostMapping(value = "searchUserIdProc")
+    public String searchUserIdProc(HttpServletRequest request, ModelMap model) throws Exception {
+        log.info("{}.searchUserIdProc Start!", this.getClass().getName());
+
+        /*
+         *  ####################################################################
+         *          웹(회원정보 입력화면)에서 받는 정보를 String 변수에 저장!!
+         *
+         *          무조건 웹으로 받은 정보는 DTO에 저장하기 위해 임시로 String 변수에 저장함
+         * ###################################################################
+         */
+
+        String userName = CmmUtil.nvl(request.getParameter("userName")); // 이름
+        String email = CmmUtil.nvl(request.getParameter("email")); // 이메일
+
+        /*
+         * ##############################################################################
+         *      반드시, 값을 받았으면 꼭 로그를 찍어서 값이 제대로 들어오는지 파악해야함
+         *                  반드시 작성할 것
+         * ##############################################################################
+         */
+        log.info("userName : {} / email : {}", userName, email);
+
+        /*
+         *  ##############################################################
+         *          웹(회원정보 입력화면)에서 받는 DTO 에 저장하기
+         *
+         *          무조건 웹으로 받은 정보는 DTO에 저장해야 한다고 이해하길 권함
+         *  ############################################################
+         */
+
+        UserInfoDTO pDTO = new UserInfoDTO();
+        pDTO.setUserName(userName);
+        pDTO.setEmail(EncryptUtil.encAES128CBC(email));
+
+        UserInfoDTO rDTO = Optional.ofNullable(userInfoService.searchUserIdOrPasswordProc(pDTO))
+                .orElseGet(UserInfoDTO::new);
+
+        model.addAttribute("rDTO", rDTO);
+
+        log.info("{}.searchUserIdProc End!", this.getClass().getName());
+
+        return "user/searchUserIdResult";
+    }
+
+    /**
+     * 비밀번호 찾기 화면
+     */
+    @GetMapping(value = "searchPassword")
+    public String searchPassword(HttpSession session) {
+        log.info("{}.searchPassword Start!", this.getClass().getName());
+
+        // 강제 URL 입력 등 오는 경우 있어 세션 삭제
+        // 비밀번호 재생성 하는 화면은 보안을 위해 생성한 NEW_PASSWORD 세션 삭제
+        session.setAttribute("NEW_PASSWORD", "");
+        session.removeAttribute("NEW_PASSWORD");
+
+        log.info("{}.searchPassword End!", this.getClass().getName());
+
+        return "user/searchPassword";
+
+    }
+
+    /**
+     * q
+     */
 }
+
