@@ -393,7 +393,68 @@ public class UserInfoController {
     }
 
     /**
-     * q
+     * 비밀번호 찾기 로직 수행
+     * <p>
+     * 아이디, 이름, 이메일 일치하면 비밀번호 재발금 화면 이동
      */
+    @PostMapping(value = "newPasswordProc")
+    public String newPasswordProc(HttpServletRequest request, ModelMap model, HttpSession session) throws Exception {
+
+        log.info("{}.user/newPasswordProc Start!", this.getClass().getName());
+
+        String msg; // 웹에 보여줄 메세지
+
+        // 정상적인 접근인지 체크
+        String newPassword = CmmUtil.nvl((String) session.getAttribute("NEW_PASSWORD"));
+
+        if (!newPassword.isEmpty()) {
+
+            /*
+             * ###################################################################################
+             *          웹(회원정보 입력화면)네서 받는 정보를 String 변수에 저장!!
+             *
+             *      무조건 웹으로 받은 정보는 DTO에 저장하기 위해 임시로 String 변수에 저장함
+             *  ####################################################################################
+             */
+
+            String password = CmmUtil.nvl(request.getParameter("password")); // 신규 비밀번호
+
+            /*
+             * ############################################################################
+             *      반드시, 값을 받았으면 꼭 로그를 찍어서 값이 제대로 들어오는지 파악해야 함
+             *                  반드시 작성할 것
+             * ############################################################################
+             */
+            log.info("password : {}", password);
+
+            /*
+             *  ##############################################################
+             *          웹(회원정보 입력화면)에서 받는 DTO 에 저장하기
+             *
+             *          무조건 웹으로 받은 정보는 DTO에 저장해야 한다고 이해하길 권함
+             *  ############################################################
+             */
+
+            UserInfoDTO pDTO = new UserInfoDTO();
+            pDTO.setUserId(newPassword);
+            pDTO.setPassword(EncryptUtil.encHashSHA256(password));
+
+            userInfoService.newPasswordProc(pDTO);
+
+            // 비밀번호 재생성하는 화면은 보안을 위해 생성한 NEW_PASSWORD 세션 삭제
+            session.setAttribute("NEW_PASSWORD", "");
+            session.removeAttribute("NEW_PASSWORD");
+
+            msg = "비밀번호가 재설정되었습니다.";
+
+        } else {
+            msg = "비정상 접근입니다.";
+        }
+        model.addAttribute("msg", msg);
+
+        log.info("{}.user/newPasswordProc End!", this.getClass().getName());
+
+        return "user/newPasswordResult";
+    }
 }
 
