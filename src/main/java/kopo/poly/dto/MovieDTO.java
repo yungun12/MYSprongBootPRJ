@@ -14,9 +14,9 @@ public class MovieDTO {
     private String movieReserve; // 얘매율
     private String score; // 평점
     private String openDay; // 개봉일
-    private String regId;
-    private String regDt;
-    private String chgId;
-    private String chgDt;
+    private String regId; // 데이터 최초 등록자 ID
+    private String regDt; // 데이터 최초 등록 일시
+    private String chgId; // 데이터 수정자 ID
+    private String chgDt; // 데이터 최종 수정 일시
 
 }
