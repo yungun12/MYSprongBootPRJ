@@ -28,7 +28,7 @@ public class OcrController {
     private final IOcrService ocrService;
 
     // 업로드되는 파일이 저장되는 기본 폴더 설정(자바에서 경로는 /로 표현함)
-    final private String FILE_UPLOAD_SAVE_PATH = "c:/upload"; // C:\\upload 폴더에 저장
+    final private String FILE_UPLOAD_SAVE_PATH = "D:/upload"; // 이 경로에 저장
 
 
     /**
@@ -75,10 +75,10 @@ public class OcrController {
             String fullFileInfo = saveFilePath + "/" + saveFileName;
 
             // 정상적으로 값이 생성되었는지 로그 찍어서 확인
-            log.info("ext : {}", ext);
-            log.info("saveFileName : {}", saveFileName);
-            log.info("saveFilePath : {}", saveFilePath);
-            log.info("fullFileInfo : {}", fullFileInfo);
+            log.info("ext : " + ext);
+            log.info("saveFileName : " + saveFileName);
+            log.info("saveFilePath : " + saveFilePath);
+            log.info("fullFileInfo : " + fullFileInfo);
 
             // 업로드 되는 파일을 서버에 저장
             mf.transferTo(new File(fullFileInfo));
@@ -95,6 +95,17 @@ public class OcrController {
             OcrDTO rDTO = Optional.ofNullable(ocrService.getReadforImageText(pDTO)).orElseGet(OcrDTO::new);
 
             res = CmmUtil.nvl(rDTO.getTextFromImage()); // 인식 결과
+
+            rDTO.setFileName(saveFileName);
+            rDTO.setFilePath(saveFilePath);
+            rDTO.setExt(ext);
+            rDTO.setOrgFileName(originalFileName);
+            rDTO.setRegId(pDTO.getRegId());
+
+            // DB에 저장하는 프로세스 시작
+            log.info("{}.insertOcr Start!", this.getClass().getName());
+            ocrService.insertOcr(rDTO);
+            log.info("{}.insertOcr End!", this.getClass().getName());
 
             rDTO = null;
             pDTO = null;

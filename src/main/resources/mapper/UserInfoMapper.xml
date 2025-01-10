@@ -20,7 +20,7 @@
         WHERE EMAIL = #{email}
     </select>
 
-    <!-- 회뤈 가입하기(회원정보 등록하기) -->
+    <!-- 회원 가입하기(회원정보 등록하기) -->
     <insert id="insertUserInfo" parameterType="UserInfoDTO">
         INSERT INTO USER_INFO
         (USER_ID,

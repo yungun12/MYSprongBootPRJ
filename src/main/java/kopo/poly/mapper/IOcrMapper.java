@@ -7,5 +7,5 @@ import org.apache.ibatis.annotations.Mapper;
 public interface IOcrMapper {
 
     // 이미지로부터 인식된 택스트 내용 DB에 등록
-    int insertOcrInfo(OcrDTO pDTO) throws Exception;
+    void insertOcr(OcrDTO rDTO) throws Exception;
 }

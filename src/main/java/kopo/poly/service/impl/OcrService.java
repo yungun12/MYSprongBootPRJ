@@ -1,12 +1,13 @@
 package kopo.poly.service.impl;
 
 import kopo.poly.dto.OcrDTO;
+import kopo.poly.mapper.IOcrMapper;
 import kopo.poly.service.IOcrService;
 import kopo.poly.util.CmmUtil;
+import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -15,8 +16,16 @@ import java.io.File;
 @Service
 public class OcrService implements IOcrService {
 
+    private final IOcrMapper ocrMapper;
+
     @Value("${orc.model.data}")
     private String ocrModel;
+
+    // 생성자를 통한 의존성 주입
+    public OcrService(IOcrMapper ocrMapper) {
+        this.ocrMapper = ocrMapper;
+    }
+
 
     /**
      * 이미지 파일로부터 문자 읽어 오기
@@ -53,5 +62,15 @@ public class OcrService implements IOcrService {
         log.info("{}.getReadforImageText End!", this.getClass().getName());
 
         return pDTO;
+    }
+
+    @Override
+    public void insertOcr(OcrDTO rDTO) throws Exception {
+
+        log.info("{}.insertOcr start!", this.getClass().getName());
+
+        ocrMapper.insertOcr(rDTO);
+
+        log.info("{}.insertOcr End!", this.getClass().getName());
     }
 }
