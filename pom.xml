@@ -100,6 +100,11 @@
             <artifactId>tess4j</artifactId>
             <version>5.2.1</version>
         </dependency>
+        <!-- 웹소켓 종속성 추가 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
