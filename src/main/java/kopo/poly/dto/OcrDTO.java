@@ -22,8 +22,8 @@ public class OcrDTO {
     // 파일 최초 등록 일시
     private String regDT;
     // 파일을 수정한 사용자의 ID
-    private String chdId;
+    private String chgId;
     // 파일 최종 수정 일시
-    private String chdDT;
+    private String chgDT;
 
 }

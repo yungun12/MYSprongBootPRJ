@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kopo.poly.mapper.IOcrMapper">
+
+    <!-- Insert OCR Info -->
+    <insert id="insertOcrInfo" parameterType="kopo.poly.dto.OcrDTO">
+        INSERT INTO OCR_INFO (
+        SAVE_FILE_NAME,
+        SAVE_FILE_PATH,
+        ORG_FILE_NAME,
+        EXT,
+        OCR_TEXT,
+        REG_ID,
+        REG_DT,
+        CHG_ID,
+        CHG_DT
+        ) VALUES (
+        #{fileName},         <!-- 기존 FileName -> 수정된 fileName -->
+        #{filePath},         <!-- 기존 FilePath -> 수정된 filePath -->
+        #{orgFileName},
+        #{ext},
+        #{textFromImage},    <!-- OCR 추출 텍스트 -->
+        #{regId},
+        NOW(),
+        #{chgId},
+        NOW()
+        )
+    </insert>
+
+
+</mapper>

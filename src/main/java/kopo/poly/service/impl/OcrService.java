@@ -1,11 +1,13 @@
 package kopo.poly.service.impl;
 
 import kopo.poly.dto.OcrDTO;
+import kopo.poly.mapper.IOcrMapper;
 import kopo.poly.service.IOcrService;
 import kopo.poly.util.CmmUtil;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +20,11 @@ public class OcrService implements IOcrService {
     @Value("${orc.model.data}")
     private String ocrModel;
 
+    @Autowired
+    private IOcrMapper ocrMapper;
+
     /**
-     * 이미지 파일로부터 문자 읽어 오기
+     * 이미지 파일로부터 문자 읽어오기
      *
      * @param pDTO 이미지 파일 정보
      * @return pDTO 이미지로부터 읽은 문자열
@@ -39,8 +44,7 @@ public class OcrService implements IOcrService {
         instance.setDatapath(ocrModel);
 
         // 한국어 학습 데이터 선택(기본 값은 영어)
-        instance.setLanguage("kor"); //한국어 설정
-//        instance.setLanguage("eng"); //영어 설정
+        instance.setLanguage("kor"); // 한국어 설정
 
         // 이미지 파일로부터 텍스트 읽기
         String result = instance.doOCR(imageFile);
@@ -53,5 +57,22 @@ public class OcrService implements IOcrService {
         log.info("{}.getReadforImageText End!", this.getClass().getName());
 
         return pDTO;
+    }
+
+    /**
+     * OCR 결과를 데이터베이스에 저장
+     *
+     * @param pDTO OCR 결과가 포함된 DTO
+     * @return DB 저장 성공 여부 (1: 성공, 0: 실패)
+     */
+    @Override
+    public int insertOcrInfo(OcrDTO pDTO) throws Exception {
+        log.info("{}.insertOcrInfo start!", this.getClass().getName());
+
+        // DB에 OCR 결과 저장
+        int result = ocrMapper.insertOcrInfo(pDTO);
+
+        log.info("{}.insertOcrInfo End!", this.getClass().getName());
+        return result;
     }
 }

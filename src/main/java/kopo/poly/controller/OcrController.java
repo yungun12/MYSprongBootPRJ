@@ -30,7 +30,6 @@ public class OcrController {
     // 업로드되는 파일이 저장되는 기본 폴더 설정(자바에서 경로는 /로 표현함)
     final private String FILE_UPLOAD_SAVE_PATH = "c:/upload"; // C:\\upload 폴더에 저장
 
-
     /**
      * 이미지 인식을 위한 파일업로드 화면 호출
      */
@@ -54,57 +53,58 @@ public class OcrController {
         String res;
 
         // 업로드하는 실제 파일명
-        // 다운로드 기능 구현시, 임의로 정의된 파일명을 원래대로 만들어주기 위한 목적
         String originalFileName = mf.getOriginalFilename();
 
-        // 파일 확장자 가져오기(파일 확장자를 포함한 전체 이름(myimage.jpg)에서 뒤쪽부터 .이 존재하는 위치 찾기
-        String ext = Objects.requireNonNull(originalFileName).substring(originalFileName.lastIndexOf(".") + 1,
-                originalFileName.length()).toLowerCase();
+        // 파일 확장자 가져오기
+        String ext = Objects.requireNonNull(originalFileName).substring(originalFileName.lastIndexOf(".") + 1).toLowerCase();
 
         // 이미지 파일만 실행되도록 함
         if (ext.equals("jpeg") || ext.equals("jpg") || ext.equals("gif") || ext.equals("png")) {
 
-            // 웹서버에 저장되는 파일 이름
-            // 업로드하는 파일 이름에 한글, 특수 문자들이 저장될 수 있기 때문에 강제로 영어와 숫자로 구성된 파일명으로 변경해서 저장한다.
-            // 리눅스나 유닉스 등 운영체제는 다국어 지원에 취약하기 때문이다.
+            // 저장될 파일명 생성
             String saveFileName = DateUtil.getDateTime("HHmmss") + "." + ext;
 
-            // 웹서버에 업로드한 파일 저장하는 물리적 경로
+            // 파일 저장 경로 생성
             String saveFilePath = FileUtil.mkdirForDate(FILE_UPLOAD_SAVE_PATH);
 
+            // 전체 파일 경로
             String fullFileInfo = saveFilePath + "/" + saveFileName;
 
-            // 정상적으로 값이 생성되었는지 로그 찍어서 확인
-            log.info("ext : {}", ext);
-            log.info("saveFileName : {}", saveFileName);
-            log.info("saveFilePath : {}", saveFilePath);
-            log.info("fullFileInfo : {}", fullFileInfo);
-
-            // 업로드 되는 파일을 서버에 저장
+            // 파일을 서버에 저장
             mf.transferTo(new File(fullFileInfo));
 
+            // OCR 처리 및 DB 저장용 DTO 생성
             OcrDTO pDTO = new OcrDTO();
-
-            pDTO.setFileName(saveFileName); // 저장되는 파일명
-            pDTO.setFilePath(saveFilePath); // 저장되는 경로
-            pDTO.setExt(ext); // 확장자
-            pDTO.setOrgFileName(originalFileName); // 원래이름
+            pDTO.setFileName(saveFileName);
+            pDTO.setFilePath(saveFilePath);
+            pDTO.setExt(ext);
+            pDTO.setOrgFileName(originalFileName);
             pDTO.setRegId("admin");
 
-            // ocrService.getReadforImageText(pDTO) 결과를 Null 값 체크하여 rDTO 객체에 저장하기
+            // Tesseract를 통해 텍스트 추출
             OcrDTO rDTO = Optional.ofNullable(ocrService.getReadforImageText(pDTO)).orElseGet(OcrDTO::new);
 
-            res = CmmUtil.nvl(rDTO.getTextFromImage()); // 인식 결과
+            // 추출된 텍스트를 DTO에 저장
+            String textFromImage = CmmUtil.nvl(rDTO.getTextFromImage());
+            pDTO.setTextFromImage(textFromImage);
 
+            // DB 저장
+            int insertResult = ocrService.insertOcrInfo(pDTO);
+            if (insertResult > 0) {
+                log.info("OCR 데이터 DB 저장 성공");
+            } else {
+                log.error("OCR 데이터 DB 저장 실패");
+            }
+
+            res = textFromImage; // 인식 결과를 반환
             rDTO = null;
             pDTO = null;
 
         } else {
             res = "이미지 파일이 아니라서 인식이 불가능합니다.";
-
         }
 
-        // 이미지로부터 인식된 문자를 JSP에 전달하기
+        // 이미지로부터 인식된 문자를 JSP에 전달
         model.addAttribute("res", res);
 
         log.info("{}.readImage End!", this.getClass().getName());
