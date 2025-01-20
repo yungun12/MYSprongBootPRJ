@@ -24,7 +24,7 @@ public class OcrService implements IOcrService {
     private IOcrMapper ocrMapper;
 
     /**
-     * 이미지 파일로부터 문자 읽어오기
+     * 이미지 파일로부터 문자 읽어 오기
      *
      * @param pDTO 이미지 파일 정보
      * @return pDTO 이미지로부터 읽은 문자열
@@ -44,7 +44,8 @@ public class OcrService implements IOcrService {
         instance.setDatapath(ocrModel);
 
         // 한국어 학습 데이터 선택(기본 값은 영어)
-        instance.setLanguage("kor"); // 한국어 설정
+        instance.setLanguage("kor"); //한국어 설정
+//        instance.setLanguage("eng"); //영어 설정
 
         // 이미지 파일로부터 텍스트 읽기
         String result = instance.doOCR(imageFile);

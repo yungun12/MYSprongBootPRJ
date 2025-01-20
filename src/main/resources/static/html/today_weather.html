@@ -14,31 +14,91 @@
                 lon = position.coords.longitude; // 경도
 
                 $.ajax({
-                    url: "/weather/getWeather"
+                    url: "/weather/getWeather",
                     type: "get",
                     dataType: "JSON",
                     data: {
                         "lon": lon,
                         "lat": lat
-
                     },
                     success: function (json) {
-                        $("#currentTemp").append(json.currentTemp);
+                        // 현재 기온 추가
+                        $("#currentTemp").html(json.currentTemp + "°C");
 
-                        const dailyList = json.dailyList; // List 구조의 일별 날씨 정보
+                        // 현재 날씨 아이콘 추가
+                        let currentIcon = json.dailyList[0].weatherIcon; // 오늘의 날씨 아이콘
+                        let currentIconUrl = "https://openweathermap.org/img/wn/" + currentIcon + ".png";
+
+                        // 아이콘을 #icon 셀에 추가
+                        $("#icon").html(`<img src="${currentIconUrl}" alt="날씨 아이콘" style="width: 40px; height: 40px;"/>`);
+
+                        // 주간 날씨 데이터 추가
+                        const dailyList = json.dailyList;
 
                         for (const daily of dailyList) {
+                            let day = daily.day;
+                            let sunrise = daily.sunrise;
+                            let sunset = daily.sunset;
+                            let moonrise = daily.moonrise;
+                            let moonset = daily.moonset;
+                            let dayTemp = daily.dayTemp;
+                            let dayTempMax = daily.dayTempMax;
+                            let dayTempMin = daily.dayTempMin;
+                            let weatherIcon = daily.weatherIcon;
+                            let iconUrl = "https://openweathermap.org/img/wn/" + weatherIcon + ".png";
 
-                            let day = daily.day; // 기준 일자
-                            let sunrise = daily.sunrise; // 해 뜨는 시단
+                            $("#daily_weather").append("<div class=\"divTableRow\">");
+                            $("#daily_weather").append("<div class=\"divTableCell\">" + day + "</div>");
+                            $("#daily_weather").append("<div class=\"divTableCell\">" + sunrise + "</div>");
+                            $("#daily_weather").append("<div class=\"divTableCell\">" + sunset + "</div>");
+                            $("#daily_weather").append("<div class=\"divTableCell\">" + moonrise + "</div>");
+                            $("#daily_weather").append("<div class=\"divTableCell\">" + moonset + "</div>");
+                            $("#daily_weather").append("<div class=\"divTableCell\">" + dayTemp + "</div>");
+                            $("#daily_weather").append("<div class=\"divTableCell\">" + dayTempMax + "</div>");
+                            $("#daily_weather").append("<div class=\"divTableCell\">" + dayTempMin + "</div>");
+                            $("#daily_weather").append("<div class=\"divTableCell\"><img src='" + iconUrl + "' alt='날씨 아이콘' style='width: 40px; height: 40px;'/></div>");
+                            $("#daily_weather").append("</div>");
                         }
                     }
-                })
-            })
-        })
+
+                });
+            });
+        });
     </script>
 </head>
 <body>
-
+<h2>오늘의 날씨 실시간 조회</h2>
+<hr/>
+<br/>
+<div class="divTable minimalistBlack">
+    <div class="divTableHeading">
+        <div class="divTableRow">
+            <div class="divTableCell" style="width: 40%">현재 기온</div>
+            <div class="divTableCell" style="width: 40%" id="currentTemp"></div>
+            <div class="divTableCell" style="width: 20%" id="icon"></div> <!-- 날씨 아이콘 셀 추가 -->
+        </div>
+    </div>
+</div>
+<br/><br/>
+<h2>주간 날씨 조회하기</h2>
+<hr/>
+<br/>
+<div class="divTable minimalistBlack">
+    <div class="divTableHeading">
+        <div class="divTableRow">
+            <div class="divTableHead">날짜</div>
+            <div class="divTableHead">해뜨는 시간</div>
+            <div class="divTableHead">해지는 시간</div>
+            <div class="divTableHead">달뜨는 시간</div>
+            <div class="divTableHead">달지는 시간</div>
+            <div class="divTableHead">평균 기온</div>
+            <div class="divTableHead">최고 기온</div>
+            <div class="divTableHead">최저 기온</div>
+            <div class="divTableHead">날씨 아이콘</div> <!-- 아이콘 열 추가 -->
+        </div>
+    </div>
+    <div class="divTableBody" id="daily_weather">
+    </div>
+</div>
 </body>
 </html>

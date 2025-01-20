@@ -47,11 +47,11 @@ public class WeatherService implements IWeatherService {
         double currentTemp = current.get("temp"); // 현재 기온
         log.info("현재 기온 : " + currentTemp);
 
-        // 일별 날씨 조회(OpenAPI가 현재 날짜 기준으로 7일 조회 후 제공)
+        // 일별 날씨 조회(Open API가 현재 날짜 기준으로 7일 조회 후 제공)
         List<Map<String, Object>> dailyList = (List<Map<String, Object>>) rMap.get("daily");
 
         // 7일 동안의 날씨 정보를 저장할 데이터
-        // OpenAPI로부터 필요한 정보만 가져와서, 처리하기 쉬운 JSON 구조로 변경에 활용한다.
+        // OpenAPI 로부터 필요한 정보만 가져와서, 처리하기 쉬운 JSON 구조로 변경에 활용한다.
         List<WeatherDailyDTO> pList = new LinkedList<>();
 
         for (Map<String, Object> dailyMap : dailyList) {
@@ -73,12 +73,22 @@ public class WeatherService implements IWeatherService {
 
             // 숫자 형태보다 문자열 형태가 데이터 처리하기 쉽시 때문에 Double 형태를 문자열로 변경함
             String dayTemp = String.valueOf(dailyTemp.get("day")); // 평균 기온
-            String dayTempMax = String.valueOf(dailyTemp.get("dayMax")); // 최고 기온
-            String dayTempMin = String.valueOf(dailyTemp.get("dayMin")); // 최저 기온
+            String dayTempMax = String.valueOf(dailyTemp.get("max")); // 최고 기온
+            String dayTempMin = String.valueOf(dailyTemp.get("min")); // 최저 기온
 
             log.info("평균 기온 : " + dayTemp);
             log.info("최고 기온 : " + dayTempMax);
             log.info("최저 기온 : " + dayTempMin);
+
+            // 날씨 아이콘 정보 가져오기
+            List<Map<String, Object>> weatherList = (List<Map<String, Object>>) dailyMap.get("weather");
+            String weatherIcon = ""; // 기본값
+
+            if (weatherList != null && !weatherList.isEmpty()) {
+                Map<String, Object> weather = weatherList.get(0); // weather 배열의 첫 번째 객체 가져오기
+                weatherIcon = String.valueOf(weather.get("icon")); // 아이콘 정보 추출
+                log.info("날씨 아이콘 : " + weatherIcon);
+            }
 
             WeatherDailyDTO wdDTO = new WeatherDailyDTO();
 
@@ -90,6 +100,7 @@ public class WeatherService implements IWeatherService {
             wdDTO.setDayTemp(dayTemp);
             wdDTO.setDayTempMax(dayTempMax);
             wdDTO.setDayTempMin(dayTempMin);
+            wdDTO.setWeatherIcon(weatherIcon); // 날씨 아이콘 추가
 
             pList.add(wdDTO); // 일별 날씨 정보를 List에 추가하기
 
